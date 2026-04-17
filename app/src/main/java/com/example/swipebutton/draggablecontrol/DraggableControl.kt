@@ -4,12 +4,7 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
@@ -36,7 +31,6 @@ import androidx.compose.ui.unit.sp
 import com.example.swipebutton.confirmationstate.ConfirmationState
 import kotlin.math.roundToInt
 
-
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ConfirmationButton(
@@ -45,14 +39,16 @@ fun ConfirmationButton(
     confirmedText: String = "Confirmed"
 ) {
     val width = 320.dp
+    val height = 56.dp
     val dragSize = 56.dp
+    val padding = 4.dp
 
     val swipeableState = rememberSwipeableState(
         initialValue = ConfirmationState.DEFAULT
     )
 
     val sizePx = with(LocalDensity.current) {
-        (width - dragSize).toPx()
+        (width - dragSize - padding * 2).toPx()
     }
 
     val anchors = mapOf(
@@ -61,7 +57,7 @@ fun ConfirmationButton(
     )
 
     val offset = swipeableState.offset.value.coerceIn(0f, sizePx)
-    val progress = (offset / sizePx)
+    val progress = offset / sizePx
 
     val isConfirmed = swipeableState.currentValue == ConfirmationState.CONFIRMED
 
@@ -73,7 +69,7 @@ fun ConfirmationButton(
     Box(
         modifier = modifier
             .width(width)
-            .height(dragSize)
+            .height(height)
             .clip(RoundedCornerShape(50))
             .background(backgroundColor)
             .swipeable(
@@ -82,7 +78,7 @@ fun ConfirmationButton(
                 thresholds = { _, _ -> FractionalThreshold(0.5f) },
                 orientation = Orientation.Horizontal
             )
-            .padding(4.dp)
+            .padding(padding)
     ) {
 
         Text(
@@ -91,7 +87,8 @@ fun ConfirmationButton(
             fontSize = 16.sp,
             modifier = Modifier
                 .align(Alignment.Center)
-                .alpha(if (isConfirmed) 1f else 1f - progress)
+                .alpha(1f - progress)
+                .padding(horizontal = dragSize / 2)
         )
 
         Box(
